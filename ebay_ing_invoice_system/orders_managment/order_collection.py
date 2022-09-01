@@ -3,7 +3,7 @@ import json
 
 from .ebay_api import EbayApi
 
-class OrdersManagment:
+class OrderCollection:
     def __init__(self):
         pass
 
@@ -34,7 +34,7 @@ class OrdersManagment:
 
         data_json = json.loads(data_file_content)
         url = data_json["get_order"]["url"]
-        headers = data_json["get_order"]["header"]
+        headers = data_json["get_order"]["headers"]
 
         return url, headers
 
@@ -42,6 +42,7 @@ class OrdersManagment:
         current_utc_time = datetime.utcnow()
         utc_time_one_hour_ago = current_utc_time - timedelta(hours=1)
         get_orders_time_string = utc_time_one_hour_ago.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        get_orders_time_string = "2022-08-25T16:00:00.000Z"
 
         return get_orders_time_string
 
@@ -68,22 +69,43 @@ class OrdersManagment:
 
         return access_token
 
-    def ebay_api_get_access_token(self):
-        url, headers, payload = self.get_ebay_oauth_data("data/ebay_data.json")
-        ebay_api = EbayApi()
-        access_token = ebay_api.get_access_token(url, headers, payload)
-
-        return access_token
-
-    def ebay_api_get_orders(self):
+    def get_access_token(self):
         url, headers, payload = self.get_ebay_oauth_data("data/ebay_data.json")
         ebay_api = EbayApi()
         request_response = ebay_api.get_access_token(url, headers, payload)
         access_token = self.request_response_fetch_token(request_response)
+
+        return access_token
+
+    def get_orders(self):
+        access_token = self.get_access_token()
 
         url, headers = self.get_ebay_get_orders_data("data/ebay_data.json")
         time_string = self.set_ebay_get_orders_time()
         url = self.prepare_ebay_get_orders_request_url(url, time_string)
         headers = self.prepare_ebay_request_headers(headers, access_token)
 
-        orders = ebay_api.get_orders(url, headers)
+        ebay_api = EbayApi()
+        request_response = ebay_api.get_orders(url, headers)
+        orders = self.request_response_fetch_orders(request_response)
+
+        return orders
+
+    def get_order(self, order_id):
+        access_token = self.get_access_token()
+
+        url, headers = self.get_ebay_get_order_data("data/ebay_data.json")
+        url = self.prepare_ebay_get_order_request_url(url, order_id)
+        headers = self.prepare_ebay_request_headers(headers, access_token)
+
+        ebay_api = EbayApi()
+        request_response = ebay_api.get_order(url, headers)
+        order = json.loads(request_response)
+
+        return order
+
+    def request_response_fetch_orders(self, request_response):
+        request_response_json = json.loads(request_response)
+        orders_list = request_response_json["orders"]
+
+        return orders_list

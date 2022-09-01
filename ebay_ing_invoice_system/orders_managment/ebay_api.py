@@ -45,7 +45,9 @@ class EbayApi:
                     loop_index += 1
                     continue
             else:
-                if request.status_code != 200:
+                if loop_index >= 3:
+                    raise RequestException("Error during eBay API getOrders request")
+                elif request.status_code != 200:
                     time.sleep(5)
                     loop_index += 1
                     continue
@@ -63,6 +65,10 @@ class EbayApi:
             except:
                 if loop_index >= 3:
                     raise RequestException("Error during eBay API getOrder request")
+                elif request.status_code != 200:
+                    time.sleep(5)
+                    loop_index += 1
+                    continue
                 else:
                     time.sleep(5)
                     loop_index += 1
@@ -73,6 +79,6 @@ class EbayApi:
                     loop_index += 1
                     continue
                 else:
-                    request_response = request.text()
+                    request_response = request.text
 
                     return request_response
