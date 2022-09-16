@@ -42,7 +42,7 @@ class OrderCollection:
         current_utc_time = datetime.utcnow()
         utc_time_one_hour_ago = current_utc_time - timedelta(hours=1)
         get_orders_time_string = utc_time_one_hour_ago.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-        get_orders_time_string = "2022-08-25T16:00:00.000Z"
+        get_orders_time_string = "2022-08-25T16:00:00.000Z" #to delete in the future - only for tests
 
         return get_orders_time_string
 
@@ -69,7 +69,7 @@ class OrderCollection:
 
         return access_token
 
-    def get_access_token(self):
+    def ebay_get_access_token(self):
         url, headers, payload = self.get_ebay_oauth_data("data/ebay_data.json")
         ebay_api = EbayApi()
         request_response = ebay_api.get_access_token(url, headers, payload)
@@ -77,8 +77,8 @@ class OrderCollection:
 
         return access_token
 
-    def get_orders(self):
-        access_token = self.get_access_token()
+    def ebay_get_orders(self):
+        access_token = self.ebay_get_access_token()
 
         url, headers = self.get_ebay_get_orders_data("data/ebay_data.json")
         time_string = self.set_ebay_get_orders_time()
@@ -91,8 +91,8 @@ class OrderCollection:
 
         return orders
 
-    def get_order(self, order_id):
-        access_token = self.get_access_token()
+    def ebay_get_order(self, order_id):
+        access_token = self.ebay_get_access_token()
 
         url, headers = self.get_ebay_get_order_data("data/ebay_data.json")
         url = self.prepare_ebay_get_order_request_url(url, order_id)
