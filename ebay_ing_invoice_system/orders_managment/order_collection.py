@@ -42,7 +42,7 @@ class OrderCollection:
         current_utc_time = datetime.utcnow()
         utc_time_one_hour_ago = current_utc_time - timedelta(hours=1)
         get_orders_time_string = utc_time_one_hour_ago.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-        get_orders_time_string = "2022-08-25T16:00:00.000Z" #to delete in the future - only for tests
+        get_orders_time_string = "2022-07-01T16:00:00.000Z" #to delete in the future - only for tests
 
         return get_orders_time_string
 
