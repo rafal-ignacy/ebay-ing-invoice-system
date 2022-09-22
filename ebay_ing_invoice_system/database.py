@@ -13,7 +13,15 @@ class Database:
 
     def connect(self, database_keys):
         try:
-            database = pymysql.connect(host = database_keys["host"], user = database_keys["user"], password = database_keys["password"], database = database_keys["database"])
+            database = pymysql.connect(
+                                        host = database_keys["host"], 
+                                        user = database_keys["user"], 
+                                        password = database_keys["password"], 
+                                        database = database_keys["database"],
+                                        connect_timeout = 15,
+                                        read_timeout = 10,
+                                        write_timeout = 10
+                                    )
 
             return database
         except Exception as database_error:
@@ -43,6 +51,7 @@ class Database:
     def insert_data(self, command, values):
         database, database_cursor = self.database_initial_steps()
         try:
+            database_cursor.execute("SET NAMES utf8")
             database_cursor.execute(command, values)
             database.commit()
         except Exception as database_error:
